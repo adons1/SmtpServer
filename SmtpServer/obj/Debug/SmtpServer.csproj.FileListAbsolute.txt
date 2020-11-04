@@ -1,0 +1,14 @@
+C:\Users\Adons_\source\repos\SmtpServer\SmtpServer\bin\Debug\SmtpServer.exe.config
+C:\Users\Adons_\source\repos\SmtpServer\SmtpServer\bin\Debug\SmtpServer.exe
+C:\Users\Adons_\source\repos\SmtpServer\SmtpServer\bin\Debug\SmtpServer.pdb
+C:\Users\Adons_\source\repos\SmtpServer\SmtpServer\obj\Debug\SmtpServer.csprojAssemblyReference.cache
+C:\Users\Adons_\source\repos\SmtpServer\SmtpServer\obj\Debug\SmtpServer.csproj.CoreCompileInputs.cache
+C:\Users\Adons_\source\repos\SmtpServer\SmtpServer\obj\Debug\SmtpServer.exe
+C:\Users\Adons_\source\repos\SmtpServer\SmtpServer\obj\Debug\SmtpServer.pdb
+C:\Users\Adons_\source\repos\SmtpServer2\SmtpServer\bin\Debug\SmtpServer.exe.config
+C:\Users\Adons_\source\repos\SmtpServer2\SmtpServer\bin\Debug\SmtpServer.exe
+C:\Users\Adons_\source\repos\SmtpServer2\SmtpServer\bin\Debug\SmtpServer.pdb
+C:\Users\Adons_\source\repos\SmtpServer2\SmtpServer\obj\Debug\SmtpServer.csprojAssemblyReference.cache
+C:\Users\Adons_\source\repos\SmtpServer2\SmtpServer\obj\Debug\SmtpServer.csproj.CoreCompileInputs.cache
+C:\Users\Adons_\source\repos\SmtpServer2\SmtpServer\obj\Debug\SmtpServer.exe
+C:\Users\Adons_\source\repos\SmtpServer2\SmtpServer\obj\Debug\SmtpServer.pdb
