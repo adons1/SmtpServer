@@ -220,9 +220,8 @@ namespace SmtpServer
                     //message has successfully been received
                     if (strMessage.StartsWith("EHLO"))
                     {
-                        //250 - smtp.gmail.com at your service, [95.66.204.160]\r\n
-                        Write("250-192.168.1.44 at your service\r\n | SIZE 35882527 | STARTTLS"); 
-
+                        //250 - smtp.gmail.com at your service, [95.66.204.160]\r\n  SIZE 35882527\r\n STARTTLS\r\n 
+                        Write("250-192.168.1.44 at your service, [192.168.1.44] \r\n250-SIZE 35882527 \r\n250-8BITMIME \r\n250-STARTTLS \r\n250-ENHANCEDSTATUSCODE \r\n250-PIPELINING \r\n250-CHUNKING \r\n250-SMTPUTF8");
                         strMessage = Read();
                     }
 
