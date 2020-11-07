@@ -40,7 +40,7 @@ namespace SmtpServer
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.Zeros;
                 //Console.WriteLine("---"+Convert.ToBase64String(Key)+ "---");
-                //Console.WriteLine(cipherText.Length);
+                Console.WriteLine(cipherText.Length);
                 // Create a decryptor    
                 ICryptoTransform decryptor = aes.CreateDecryptor(Key, IV);
                 // Create the streams used for decryption.    
@@ -68,6 +68,29 @@ namespace SmtpServer
         TcpClient client;
         public static string HashCheck(string input)
         {
+            Console.WriteLine(input.Length);
+            byte[] arr = Encoding.UTF8.GetBytes(input);
+            int length = 0;
+            for (int i=0; i<arr.Length;i++)
+            {
+                if (arr[i] == 0)
+                {
+                    length = i;
+                    break;
+                }
+            }
+            if (length == 0)
+            {
+                length = arr.Length;
+            }
+            byte[] arr2 = new byte[length];
+            for (int i = 0; i < length; i++)
+            {
+                arr2[i] = arr[i];
+                //Console.Write(arr2[i]);
+                //Console.Write("\t-");
+            }
+            input = Encoding.UTF8.GetString(arr2);
             SHA1Managed hashed_managed = new SHA1Managed();
 
             var hash = hashed_managed.ComputeHash(Encoding.UTF8.GetBytes(input));
@@ -92,16 +115,26 @@ namespace SmtpServer
                     Console.WriteLine(strMessage);
                     if (bol == true)
                     {
-                        while (strMessage.IndexOf("3D")>=0)
-                        {
-                            strMessage = strMessage.Remove(strMessage.IndexOf("3D"), 2);
-                        }
                         while (strMessage.IndexOf("=\r\n") >= 0)
                         {
                             strMessage = strMessage.Remove(strMessage.IndexOf("=\r\n"), 3);
                         }
-                        //Console.WriteLine(strMessage);
-                        for(int i=0; i < strMessage.Length; i++)
+                        int index = strMessage.IndexOf("3D");
+                        while (index >= 0)
+                        {
+                            if ((strMessage[index - 1]) == '=')
+                            {
+                                strMessage = strMessage.Remove(index, 2);
+                                index = strMessage.IndexOf("3D");
+                            }
+                        }
+
+                        strMessage += "=";
+                        strMessage = strMessage.Remove(strMessage.Length - 8, 8);
+
+                        Console.WriteLine(strMessage);
+                        Console.WriteLine(strMessage.Length);
+                        for (int i=0; i < strMessage.Length; i++)
                         {
                             if (i < strMessage.Length - 28)
                             {
@@ -112,8 +145,16 @@ namespace SmtpServer
                                 message.DigitalSign += strMessage[i];
                             }
                         }
-                        //Console.WriteLine(message.message);
-                        //Console.WriteLine(message.DigitalSign);
+
+                       // message.DigitalSign = message.DigitalSign.Remove(message.DigitalSign.Length-2, 1);
+                        Console.WriteLine("message.message:");
+                        Console.WriteLine(message.message);
+                        Console.WriteLine("strMessage.Length:");
+                        Console.WriteLine(strMessage.Length);
+                        Console.WriteLine("message.message.Length:");
+                        Console.WriteLine(message.message.Length);
+                        Console.WriteLine("message.DigitalSign:");
+                        Console.WriteLine(message.DigitalSign);
 
                         FileStream fileKey = new FileStream("Key.txt", FileMode.OpenOrCreate);
                         FileStream fileIV = new FileStream("IV.txt", FileMode.OpenOrCreate);
@@ -124,16 +165,24 @@ namespace SmtpServer
                         fileIV.Read(IV, 0, 16);
                         fileKey.Close();
                         fileIV.Close();
+                        
                         byte[] helpmepls = Convert.FromBase64String(message.message);
+                        //foreach(byte b in helpmepls)
+                        //{
+                        //    Console.Write(b);
+                        //    Console.Write("\t");
+                        //}
+                        Console.WriteLine("\t");
                         string decrypted_body = RijndaelExample.Decrypt(helpmepls, key, IV);
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine(decrypted_body);
                         Console.ForegroundColor = ConsoleColor.White;
 
                         Console.WriteLine(message.DigitalSign);
-                        Console.WriteLine(HashCheck(decrypted_body));
+                        string hashed_string = HashCheck(decrypted_body);
+                        Console.WriteLine(hashed_string);
                         
-                        if (HashCheck(decrypted_body) == message.DigitalSign)
+                        if (hashed_string == message.DigitalSign)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine(true);
@@ -166,14 +215,33 @@ namespace SmtpServer
                     //message has successfully been received
                     if (strMessage.StartsWith("EHLO"))
                     {
-                        Write("250 OK");
+                        Write("250 192.168.1.44 Hello ADONS-PC | SIZE 1000000 | AUTH LOGIN | AUTH PLAIN");
                     }
 
+                    //S: 220 smtp.server.com Simple Mail Transfer Service Ready
+                    //C: EHLO client.example.com
+                    //S: 250 - smtp.server.com Hello client.example.com
+                    //  S: 250 - SIZE 1000000
+                    //S: 250 AUTH LOGIN PLAIN CRAM-MD5
+                    //C: AUTH PLAIN
+                    //S: 334
+                    //C: dGVzdAB0ZXN0ADEyMzQ =
+                    //S: 235 2.7.0 Authentication successful
+                    if (strMessage.StartsWith("AUTH"))
+                    {
+                        Write("334 WaitingForAuthentification");
+                        strMessage = Read();
+                        Console.WriteLine(strMessage);
+                        Write("334 WaitingForAuthentification");
+                        strMessage = Read();
+                        Console.WriteLine(strMessage);
+                        Write("235 2.7.0 Accepted");
+                    }
                     if (strMessage.StartsWith("RCPT TO"))
                     {
                         Write("250 OK");
                     }
-
+                    
                     if (strMessage.StartsWith("MAIL FROM"))
                     {
 
@@ -183,7 +251,9 @@ namespace SmtpServer
                     if (strMessage.StartsWith("DATA"))
                     {
                         Write("354 Start mail input; end with");
+                        /* */
                         strMessage = Read();
+                        Console.WriteLine(strMessage);
                         Write("250 OK");
                         bol = true;
                     }
@@ -224,17 +294,26 @@ namespace SmtpServer
         static void Main(string[] args)
         {
             Console.Title = "Server";
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 25);
+            IPAddress localAddr = IPAddress.Parse("192.168.1.44");
+            IPEndPoint endPoint = new IPEndPoint(localAddr, 587);
             TcpListener listener = new TcpListener(endPoint);
-            listener.Start();
+            listener.Start(100);
 
             while (true)
             {
-                TcpClient client = listener.AcceptTcpClient();
-                SMTPServer handler = new SMTPServer();
-                handler.Init(client);
-                Thread thread = new System.Threading.Thread(new ThreadStart(handler.Run));
-                thread.Start();
+                try
+                {
+                    TcpClient client = listener.AcceptTcpClient();
+                    SMTPServer handler = new SMTPServer();
+                    handler.Init(client);
+                    Thread thread = new System.Threading.Thread(new ThreadStart(handler.Run));
+                    thread.Start();
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Thread.Sleep(3000);
+                }
             }
         }
         

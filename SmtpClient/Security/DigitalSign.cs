@@ -21,6 +21,12 @@ namespace SmtpClient.Security
     {
         public static string Hash(string input)
         {
+            //byte[] arr = Encoding.UTF8.GetBytes(input);
+            //foreach (byte b in arr)
+            //{
+            //    Console.Write(b);
+            //    Console.Write("\t-");
+            //}
             SHA1Managed hashed_managed = new SHA1Managed();
             
             var hash = hashed_managed.ComputeHash(Encoding.UTF8.GetBytes(input));
