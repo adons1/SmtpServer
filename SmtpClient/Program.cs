@@ -20,7 +20,7 @@ namespace SmtpClientt
     {
         static void Main(string[] args)
         {
-            
+            string message;
             Console.Title = "Client";
             Console.WriteLine("destination e-mail:");
             string destinationEMail = "user2@localhost.com";
@@ -35,21 +35,41 @@ namespace SmtpClientt
 
 
             // текст письма
-
-            Console.WriteLine("текст письма:");
-            //string textFromFile;
-            //using (FileStream fstream = File.OpenRead("text.txt"))
-            //{
-            //    // преобразуем строку в байты
-            //    byte[] array = new byte[fstream.Length];
-            //    // считываем данные
-            //    fstream.Read(array, 0, array.Length);
-            //    // декодируем байты в строку
-            //    textFromFile = Encoding.UTF8.GetString(array);
-            //    //textFromFile = Convert.ToBase64String(array);
-            //}
-            string message = Console.ReadLine(); //textFromFile;
-
+            while (true)
+            {
+                Console.WriteLine("источник:");
+                string typeofmes = Console.ReadLine();
+                if (typeofmes == "file")
+                {
+                    Console.WriteLine("путь к файлу:");
+                    string filepath = Console.ReadLine();
+                    string textFromFile;
+                    using (FileStream fstream = File.OpenRead("text.txt"))
+                    {
+                        // преобразуем строку в байты
+                        byte[] array = new byte[fstream.Length];
+                        // считываем данные
+                        fstream.Read(array, 0, array.Length);
+                        // декодируем байты в строку
+                        textFromFile = Encoding.UTF8.GetString(array);
+                        //textFromFile = Convert.ToBase64String(array);
+                    }
+                    message = textFromFile;
+                    break;
+                }
+                if (typeofmes == "console")
+                {
+                    Console.WriteLine("текст письма:");
+                    message = Console.ReadLine(); //textFromFile;
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("неверный формат:");
+                    
+                }
+            }
+            
             //while (message.Length % 16 != 0)
             //{
             //    message += '0';

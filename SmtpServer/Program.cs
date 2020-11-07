@@ -119,21 +119,23 @@ namespace SmtpServer
                         {
                             strMessage = strMessage.Remove(strMessage.IndexOf("=\r\n"), 3);
                         }
-                        int index = strMessage.IndexOf("3D");
+                        int index = strMessage.IndexOf("=3D");
                         while (index >= 0)
                         {
-                            if ((strMessage[index - 1]) == '=')
-                            {
-                                strMessage = strMessage.Remove(index, 2);
-                                index = strMessage.IndexOf("3D");
-                            }
+                            strMessage = strMessage.Remove(index, 3);
+                            strMessage = strMessage.Insert(index, "=");
+                            index = strMessage.IndexOf("=3D");
                         }
-
-                        strMessage += "=";
-                        strMessage = strMessage.Remove(strMessage.Length - 8, 8);
-
+                        while (strMessage[strMessage.Length-1] != '=')
+                        {
+                            strMessage = strMessage.Remove(strMessage.Length-1, 1);
+                        }
+                        //strMessage += "=";
+                        //strMessage = strMessage.Remove(strMessage.IndexOf("\r"), 1);
                         Console.WriteLine(strMessage);
                         Console.WriteLine(strMessage.Length);
+                        strMessage = strMessage.Remove(1500, 24);
+                        strMessage = strMessage.Insert(1500, "qwertyuiopasdfghjklzxcvb");
                         for (int i=0; i < strMessage.Length; i++)
                         {
                             if (i < strMessage.Length - 28)
@@ -201,6 +203,9 @@ namespace SmtpServer
                 catch (Exception e)
                 {
                     //a socket error has occured
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(false);
+                    Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine(e.Message);
                     break;
                 }
