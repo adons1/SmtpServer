@@ -134,8 +134,8 @@ namespace SmtpServer
                         //strMessage = strMessage.Remove(strMessage.IndexOf("\r"), 1);
                         Console.WriteLine(strMessage);
                         Console.WriteLine(strMessage.Length);
-                        strMessage = strMessage.Remove(1500, 24);
-                        strMessage = strMessage.Insert(1500, "qwertyuiopasdfghjklzxcvb");
+                        //strMessage = strMessage.Remove(1500, 24);
+                        //strMessage = strMessage.Insert(1500, "qwertyuiopasdfghjklzxcvb");
                         for (int i=0; i < strMessage.Length; i++)
                         {
                             if (i < strMessage.Length - 28)
@@ -220,7 +220,10 @@ namespace SmtpServer
                     //message has successfully been received
                     if (strMessage.StartsWith("EHLO"))
                     {
-                        Write("250 192.168.1.44 Hello ADONS-PC | SIZE 1000000 | AUTH LOGIN | AUTH PLAIN");
+                        //250 - smtp.gmail.com at your service, [95.66.204.160]\r\n
+                        Write("250-192.168.1.44 at your service\r\n | SIZE 35882527 | STARTTLS"); 
+
+                        strMessage = Read();
                     }
 
                     //S: 220 smtp.server.com Simple Mail Transfer Service Ready

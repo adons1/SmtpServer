@@ -130,7 +130,7 @@ namespace SmtpClientt
             smtp.UseDefaultCredentials = false;
             smtp.Credentials = new NetworkCredential("user1@localhost.com", "mypassword");
             
-            smtp.EnableSsl = false;
+            smtp.EnableSsl = true;
 
             try
             {
